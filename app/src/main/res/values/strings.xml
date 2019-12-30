@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">CSE Example</string>
+    <string name="usage_example">Usage Example</string>
+    <string name="encrypt_card_example">Encrypt card example</string>
+    <string name="encrypt_cvv_example">Encrypt cvv example</string>
+</resources>

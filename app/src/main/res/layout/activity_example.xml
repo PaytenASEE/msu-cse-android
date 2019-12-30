@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.merchantsafeunipay.cse.example.com.payten.msu.cse.example.ExampleActivity">
+
+    <Button
+        android:id="@+id/usage_example"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/usage_example" />
+
+    <Button
+        android:id="@+id/encrypt_card_example"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/encrypt_card_example" />
+
+    <Button
+        android:id="@+id/encrypt_cvv_example"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/encrypt_cvv_example" />
+
+</LinearLayout>

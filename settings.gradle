@@ -1,0 +1,2 @@
+include ':app', ':cse'
+rootProject.name='CSE Example'
