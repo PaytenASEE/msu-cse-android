@@ -1,4 +1,31 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+ext {
+
+    bintrayRepo = "MsuCse"
+    bintrayName = "com.payten.msu"
+
+    publishedGroupId = 'com.payten.msu'
+    libraryName = 'MsuCse'
+    artifact = 'cse-android'
+
+    libraryDescription = 'Payten MSU CSE'
+
+    siteUrl = 'https://github.com/PaytenASEE/msu-cse-android'
+    gitUrl = 'https://github.com/PaytenASEE/msu-cse-android.git'
+
+    libraryVersion = rootProject.ext.msuCseSdkVersion
+
+    developerId = 'jasminsuljic'
+    developerName = 'Jasmin Suljic'
+    developerEmail = 'jasmin.suljich@gmail.com'
+
+    licenseName = 'MIT License'
+    licenseUrl = 'https://github.com/jasminsuljic/monri-android/blob/master/LICENSE'
+    allLicenses = ["MIT License"]
+}
 
 android {
     compileSdkVersion 29
@@ -9,7 +36,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.0-SNAPSHOT"
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -39,4 +66,11 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:3.2.0'
+}
+
+//Add these lines to publish library to bintray. This is the readymade scripts made by github user nuuneoi to make uploading to bintray easy.
+//Place it at the end of the file
+if (project.rootProject.file('local.properties').exists()) {
+    apply from: 'https://raw.githubusercontent.com/jasminsuljic/JCenter-Gradle-Scripts/master/install.gradle'
+    apply from: 'https://raw.githubusercontent.com/jasminsuljic/JCenter-Gradle-Scripts/master/bintray.gradle'
 }

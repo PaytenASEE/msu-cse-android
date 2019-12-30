@@ -4,10 +4,16 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
         
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -20,6 +26,18 @@ allprojects {
         jcenter()
         
     }
+}
+
+ext {
+    buildToolsVersion = "27.0.3"
+    compileSdkVersion = 28
+    supportLibVersion = '28.0.0'
+
+    javaAnnotationVersion = "1.0"
+    junitVersion = "4.12"
+    mockitoCoreVersion = "2.10.0"
+    robolectricVersion = '4.3'
+    msuCseSdkVersion = '1.0.0'
 }
 
 task clean(type: Delete) {
