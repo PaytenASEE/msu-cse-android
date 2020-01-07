@@ -101,11 +101,27 @@ void encrypt(String cvv,
              EncryptCallback callback
     )
 ```
+* hasErrors: returns true if any errors occurred during encryption 
+Method signature:
+```java
+
+boolean hasErrors()
+
+```
+
+* getErrors: returns list of errors ocurred during encryption
+```java
+
+public List<String> getErrors();
+
+```
 
 * isValidCardHolderName: returns true if card holder's name is non empty
 Method signature:
 ```java
-boolean isValidCardHolderName(String name)
+
+boolean isValidCardHolderName(String name);
+
 ```
 * isValidPan - returns true if pan is valid
 Method signature:
