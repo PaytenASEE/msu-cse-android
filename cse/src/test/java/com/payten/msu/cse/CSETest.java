@@ -25,7 +25,7 @@ public class CSETest {
 
     @Before
     public void setUp() throws Exception {
-        cse = new CSE(Mockito.mock(Handler.class));
+        cse = new CSE(Mockito.mock(Handler.class), true);
     }
 
     @Test
@@ -54,7 +54,6 @@ public class CSETest {
                 Pair.create(new String[]{"4111 1111 1111 1111", "1234"}, false),
                 Pair.create(new String[]{"4111 1111 1111 1111", "12"}, false),
                 Pair.create(new String[]{"3782 822463 10005", "1234"}, true),
-                //                TODO: investigate correctness of this
                 Pair.create(new String[]{"378282246310005", "123"}, true),
                 Pair.create(new String[]{"378282246310005", "12345"}, false),
                 Pair.create(new String[]{"378282246310005", "12"}, false),
@@ -76,11 +75,12 @@ public class CSETest {
     @Test
     public void isValidCardHolderName() {
         Arrays.asList(
+                Pair.create("", false),
                 Pair.create("a", true),
                 // 128 - max
-                Pair.create("00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", true),
+                Pair.create(repeat(128, '0'), true),
                 /// 129 - over max
-                Pair.create("000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", false)
+                Pair.create(repeat(129, '0'), false)
         ).forEach(pair -> {
             if (pair.second) {
                 Assert.assertTrue(String.format("CardHolder name = '%s' should be valid", pair.first), cse.isValidCardHolderName(pair.first));
@@ -141,8 +141,8 @@ public class CSETest {
                 Pair.create("989101", CardBrand.DINACARD),
                 Pair.create("657371", CardBrand.DISCOVER)
         ).forEach(pair -> Assert.assertEquals(String.format("Bin '%s' brand should be %s", pair.first, pair.second),
-                                              pair.second,
-                                              cse.detectBrand(pair.first)
+                pair.second,
+                cse.detectBrand(pair.first)
         ));
     }
 

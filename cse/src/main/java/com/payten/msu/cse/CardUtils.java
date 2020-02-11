@@ -103,7 +103,7 @@ class CardUtils {
      */
     static boolean isValidCardLength(@Nullable String cardNumber) {
         return cardNumber != null && isValidCardLength(cardNumber,
-                                                       getCardBrand(CSETextUtils.removeNonDigits(cardNumber)));
+                getCardBrand(CSETextUtils.removeNonDigits(cardNumber)));
     }
 
     /**
@@ -238,7 +238,7 @@ class CardUtils {
     }
 
     static boolean isValidCardHolderName(String name) {
-        return name != null && name.length() <= 128;
+        return name != null && name.length() > 0 && name.length() <= 128;
     }
 
     static boolean isValidCVV(String cvv) {
@@ -280,6 +280,6 @@ class CardUtils {
     }
 
     static boolean validateNonce(String nonce) {
-        return nonce != null && nonce.length() < 16;
+        return nonce != null && nonce.length() > 0 && nonce.length() <= 16;
     }
 }

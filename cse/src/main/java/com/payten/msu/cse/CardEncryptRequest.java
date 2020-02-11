@@ -12,6 +12,7 @@ import static com.payten.msu.cse.CardUtils.isValidCardHolderName;
 import static com.payten.msu.cse.CardUtils.isValidExpiry;
 import static com.payten.msu.cse.CardUtils.isValidPan;
 import static com.payten.msu.cse.CardUtils.normalizeYear;
+import static com.payten.msu.cse.CardUtils.validateNonce;
 
 /**
  * Created by jasmin.suljic@monri.com
@@ -58,7 +59,7 @@ final class CardEncryptRequest implements EncryptRequest {
             this.errors.add("CVV_INVALID");
         }
 
-        if (nonce != null && nonce.length() > 16) {
+        if (!validateNonce(nonce)) {
             this.errors.add("NONCE_MISSING_OR_INVALID");
         }
 

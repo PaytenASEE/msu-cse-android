@@ -1,23 +1,64 @@
 package com.payten.msu.cse;
 
+import androidx.annotation.Nullable;
+
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
  * Created by jasmin.suljic@monri.com
  * MSU CSE
  */
 final class CSEApiImpl implements CSEApi {
 
-    CSEApiImpl() {
+    @Nullable
+    private String publicKey;
+    private final String publicKeyUrl;
+
+    CSEApiImpl(boolean developmentMode) {
+        publicKeyUrl = endpoint(developmentMode);
     }
 
     @Override
     public PublicKeyFetchResult fetchPublicKey() {
 
-        return PublicKeyFetchResult.success("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhGNpIhKTlCi1iwKEbFD2CTL0AYbMV+QCaP/5bl2hkBjgkQdG931Vep7Z4gVCSYCmmE4T8d1TIdkNoTPwOltzoX9Z1pI/EoqktNLlS3re+dApPU36FHGaGaPCfNR+/zJ1Pd1qazaZ5SJhFyf17KU9HLi7w9WYRJVGDWj6CJKeefWYLclLThD+SBCmpJTqhDdFRt9bW1LwSqfshmSzxI7jHTqnj+o4Ikv2xC4V7bIwjzmUk7t4IzT+rJcin+oB+Xgq+stxvZodZrpSZbXnPNObSIsVCxXqdDz1lXjkwMc9aV0X5KqOjEK87QjguPAGsba3AfbWIWjzuR3xoAVzQRo+tQIDAQAB");
+        if (publicKey != null) {
+            return PublicKeyFetchResult.success(publicKey);
+        } else {
+
+            try {
+                // Instantiate the RequestQueue.
+                URL url = new URL(publicKeyUrl);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                    BufferedReader r = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder total = new StringBuilder();
+                    for (String line; (line = r.readLine()) != null; ) {
+                        total.append(line).append('\n');
+                    }
+
+                    JSONObject jsonObject = new JSONObject(total.toString());
+                    this.publicKey = jsonObject.getString("publicKey");
+                    return PublicKeyFetchResult.success(publicKey);
+                } finally {
+                    urlConnection.disconnect();
+                }
+            } catch (Exception e) {
+                return PublicKeyFetchResult.failed(EncryptException.create(e, EncryptExceptionCode.REQUEST_FAILED));
+            }
+        }
     }
 
 
     @SuppressWarnings("unused")
-    private String endpoint(boolean developmentMode) {
+    private static String endpoint(boolean developmentMode) {
         if (developmentMode) {
             return "https://test.merchantsafeunipay.com/msu/cse/publickey";
         } else {

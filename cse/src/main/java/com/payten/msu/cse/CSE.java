@@ -20,13 +20,13 @@ public final class CSE {
     private final CSEApi cseApi;
 
     public CSE(boolean developmentMode) {
-        this(new Handler(Looper.getMainLooper()));
+        this(new Handler(Looper.getMainLooper()), developmentMode);
     }
 
-    CSE(Handler handler) {
+    CSE(Handler handler, boolean developmentMode) {
         this.handler = handler;
         errors = new ArrayList<>();
-        this.cseApi = new CSEApiImpl();
+        this.cseApi = new CSEApiImpl(developmentMode);
     }
 
 
