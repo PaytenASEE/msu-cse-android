@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import java.util.Calendar;
 
+import static com.payten.msu.cse.CSETest.MAESTRO_TEST_CARDS;
+
 /**
  * Created by jasmin.suljic@monri.com
  * MSU CSE
@@ -16,7 +18,7 @@ public class CardEncryptRequestTest {
     @Test
     public void validate() {
         final Calendar instance = Calendar.getInstance();
-        request = new CardEncryptRequest("4111 1111 1111 1111", instance.get(Calendar.YEAR), 12, "Test test", "123", "random");
+        request = new CardEncryptRequest(MAESTRO_TEST_CARDS.get(0), instance.get(Calendar.YEAR), 12, "Test test", "123", "random");
         Assert.assertTrue(request.validate());
         Assert.assertTrue(request.errors().isEmpty());
     }

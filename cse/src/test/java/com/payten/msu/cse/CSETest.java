@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Created by jasmin.suljic@monri.com
@@ -20,6 +21,19 @@ import java.util.List;
  */
 @SuppressWarnings("ConstantConditions")
 public class CSETest {
+
+    static final List<String> MAESTRO_TEST_CARDS = Arrays.asList(
+            "6759 6498 2643 8453",
+            "6772 5565 4321 31279",
+            "5892830000000000",
+            "5890040000000016",
+            "6759649826438453"
+    );
+
+    private static final List<String> VISA_TEST_CARDS = Arrays.asList(
+            "4111 1111 1111 1111",
+            "4111 1111 1111 1111 003"
+    );
 
     private CSE cse;
 
@@ -59,7 +73,10 @@ public class CSETest {
                 Pair.create(new String[]{"378282246310005", "12"}, false),
                 Pair.create(new String[]{"55554444 4444 4444", "123"}, true),
                 Pair.create(new String[]{"55554444 4444 4444", "1234"}, false),
-                Pair.create(new String[]{"55554444 4444 4444", "12"}, false)
+                Pair.create(new String[]{"55554444 4444 4444", "12"}, false),
+                Pair.create(new String[]{MAESTRO_TEST_CARDS.get(0), "12"}, false),
+                Pair.create(new String[]{MAESTRO_TEST_CARDS.get(0), "123"}, true),
+                Pair.create(new String[]{MAESTRO_TEST_CARDS.get(0), "1234"}, false)
         ).forEach(pair -> {
             //noinspection ConstantConditions
             final String cvv = pair.first[1];
@@ -92,8 +109,7 @@ public class CSETest {
 
     @Test
     public void isValidPan() {
-        Arrays.asList(
-                Pair.create("4111 1111 1111 1111", true),
+        Stream<Pair<String, Boolean>> list = Stream.of(
                 Pair.create("4111 1111 1111", false),
                 Pair.create("4111 1111 1111 1112", false),
                 Pair.create("4242 4242 4242 4242", true),
@@ -102,14 +118,25 @@ public class CSETest {
                 Pair.create("5555 4444 4444 4441", false),
                 Pair.create("3782 822463 10005", true),
                 Pair.create("3782 822463 10000", false)
-        ).forEach(pair -> {
-            //noinspection ConstantConditions
-            if (pair.second) {
-                Assert.assertTrue(String.format("pan = %s should be valid", pair.first), cse.isValidPan(pair.first));
-            } else {
-                Assert.assertFalse(String.format("pan = %s should be invalid", pair.first), cse.isValidPan(pair.first));
-            }
+        );
+
+        Stream<Pair<String, Boolean>> maestroPanTest = MAESTRO_TEST_CARDS.stream().map(s -> {
+            return Pair.create(s, true);
         });
+        Stream<Pair<String, Boolean>> visaPanTest = VISA_TEST_CARDS.stream().map(s -> {
+            return Pair.create(s, true);
+        });
+
+        Stream.of(list, maestroPanTest, visaPanTest)
+                .flatMap(i -> i)
+                .forEach(pair -> {
+                    //noinspection ConstantConditions
+                    if (pair.second) {
+                        Assert.assertTrue(String.format("pan = %s should be valid", pair.first), cse.isValidPan(pair.first));
+                    } else {
+                        Assert.assertFalse(String.format("pan = %s should be invalid", pair.first), cse.isValidPan(pair.first));
+                    }
+                });
     }
 
     @Test
@@ -133,17 +160,29 @@ public class CSETest {
 
     @Test
     public void detectBrand() {
-        Arrays.asList(
+        Stream<Pair<String, CardBrand>> pairs = Stream.of(
                 Pair.create("411111", CardBrand.VISA),
                 Pair.create("5168 4412 2363 0339", CardBrand.MASTERCARD),
                 Pair.create("3782 822463 10005", CardBrand.AMERICAN_EXPRESS),
                 Pair.create("989100", CardBrand.DINACARD),
                 Pair.create("989101", CardBrand.DINACARD),
                 Pair.create("657371", CardBrand.DISCOVER)
-        ).forEach(pair -> Assert.assertEquals(String.format("Bin '%s' brand should be %s", pair.first, pair.second),
-                pair.second,
-                cse.detectBrand(pair.first)
-        ));
+        );
+
+        Stream<Pair<String, CardBrand>> maestroCardBrand = MAESTRO_TEST_CARDS.stream().map(s -> {
+            return Pair.create(s, CardBrand.MAESTRO);
+        });
+
+        Stream<Pair<String, CardBrand>> visaCardBrand = VISA_TEST_CARDS.stream().map(s -> {
+            return Pair.create(s, CardBrand.VISA);
+        });
+
+        Stream.of(pairs, maestroCardBrand, visaCardBrand)
+                .flatMap(i -> i)
+                .forEach(pair -> Assert.assertEquals(String.format("Bin '%s' brand should be %s", pair.first, pair.second),
+                        pair.second,
+                        cse.detectBrand(pair.first)
+                ));
     }
 
     @Test
@@ -179,7 +218,7 @@ public class CSETest {
         });
     }
 
-    static String repeat(int length, char repeat) {
+    private static String repeat(int length, char repeat) {
         return new String(new char[length]).replace('\0', repeat);
     }
 }
