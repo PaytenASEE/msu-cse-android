@@ -1,6 +1,7 @@
 package com.payten.msu.cse;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.lang.ref.WeakReference;
 
@@ -41,10 +42,18 @@ final class EncryptTask extends AsyncTask<Void, Void, EncryptTaskResult> {
 
     @Override
     protected void onPostExecute(EncryptTaskResult encryptTaskResult) {
+        EncryptCallback encryptCallback = callback.get();
+
+        //noinspection ConstantConditions
+        if (callback == null) {
+            Log.w("EncryptTask", "onPostExecute invoked with callback = null");
+            return;
+        }
+
         if (encryptTaskResult.getEncrypted() != null) {
-            callback.get().onSuccess(encryptTaskResult.getEncrypted());
+            encryptCallback.onSuccess(encryptTaskResult.getEncrypted());
         } else {
-            callback.get().onError(encryptTaskResult.getEncryptException());
+            encryptCallback.onError(encryptTaskResult.getEncryptException());
         }
     }
 }

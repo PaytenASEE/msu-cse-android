@@ -11,7 +11,7 @@ import java.util.Calendar;
  */
 public class CardEncryptRequestTest {
 
-    CardEncryptRequest request;
+    private CardEncryptRequest request;
 
     @Test
     public void validate() {
@@ -30,5 +30,23 @@ public class CardEncryptRequestTest {
         Assert.assertEquals(1, request.errors().size());
 
         Assert.assertEquals("PAN_INVALID", request.errors().get(0));
+    }
+
+    @Test
+    public void plain() {
+        final Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.YEAR, 3);
+        request = new CardEncryptRequest("4111 1111 1111 1111", instance.get(Calendar.YEAR), 5, "Test test", "123", "random");
+        String expected = String.format("p=4111111111111111&y=%s&m=%s&c=123&cn=Test test&n=random", instance.get(Calendar.YEAR), "05");
+        Assert.assertEquals(expected, request.plain());
+    }
+
+    @Test
+    public void plain1() {
+        final Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.YEAR, 3);
+        request = new CardEncryptRequest("4111 1111 1111 1111", instance.get(Calendar.YEAR), 11, "Test test", "123", "random");
+        String expected = String.format("p=4111111111111111&y=%s&m=%s&c=123&cn=Test test&n=random", instance.get(Calendar.YEAR), "11");
+        Assert.assertEquals(expected, request.plain());
     }
 }

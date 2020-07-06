@@ -71,9 +71,17 @@ final class CardEncryptRequest implements EncryptRequest {
         return Collections.unmodifiableList(errors);
     }
 
+    private static String paddedMonthValue(Integer expiryMonth) {
+        if (expiryMonth < 10) {
+            return String.format("0%s", expiryMonth);
+        } else {
+            return expiryMonth.toString();
+        }
+    }
+
     @SuppressLint("DefaultLocale")
     @Override
     public String plain() {
-        return String.format("p=%s&y=%d&m=%s&c=%s&cn=%s&n=%s", pan, expiryYear, expiryMonth, cvv, cardHolderName, nonce);
+        return String.format("p=%s&y=%d&m=%s&c=%s&cn=%s&n=%s", pan, expiryYear, paddedMonthValue(expiryMonth), cvv, cardHolderName, nonce);
     }
 }
