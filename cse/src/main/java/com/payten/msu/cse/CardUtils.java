@@ -3,7 +3,9 @@ package com.payten.msu.cse;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import static com.payten.msu.cse.CSETextUtils.isBlank;
@@ -26,6 +28,10 @@ class CardUtils {
     private static final int LENGTH_COMMON_CARD = 16;
     private static final int LENGTH_AMERICAN_EXPRESS = 15;
     private static final int LENGTH_DINERS_CLUB = 14;
+    private static final List<Integer> MAESTRO_CARD_LENGTH = Arrays.asList(12, 13, 14, 15, 16, 17, 18, 19);
+    private static final List<Integer> VISA_CARD_LENGTH = Arrays.asList(16, 19);
+
+    private static final List<String> PREFIXES_MAESTRO = Arrays.asList("56", "58", "67", "502", "503", "506", "639", "5018", "6020");
 
     /**
      * @param month
@@ -127,6 +133,10 @@ class CardUtils {
                 return length == LENGTH_AMERICAN_EXPRESS;
             case DINERS_CLUB:
                 return length == LENGTH_DINERS_CLUB;
+            case MAESTRO:
+                return MAESTRO_CARD_LENGTH.contains(length);
+            case VISA:
+                return VISA_CARD_LENGTH.contains(length);
             default:
                 return length == LENGTH_COMMON_CARD;
         }
@@ -214,27 +224,40 @@ class CardUtils {
         if (CSETextUtils.isBlank(pan)) {
             return CardBrand.UNKNOWN;
         }
-        String iin = CSETextUtils.safeSubstring(pan, 0, 6);
+        String bin = CSETextUtils.safeSubstring(pan, 0, 6);
 
-        if (iin.matches(regVisa)) {
+        if (bin.matches(regVisa)) {
             return CardBrand.VISA;
-        } else if (iin.matches(regMaster)) {
+        } else if (startsWithInList(bin, PREFIXES_MAESTRO)) {
+            return CardBrand.MAESTRO;
+        } else if (bin.matches(regMaster)) {
             return CardBrand.MASTERCARD;
-        } else if (iin.matches(regExpress)) {
+        } else if (bin.matches(regExpress)) {
             return CardBrand.AMERICAN_EXPRESS;
-        } else if (iin.matches(regDiners)) {
+        } else if (bin.matches(regDiners)) {
             return CardBrand.DINERS_CLUB;
-        } else if (iin.matches(regDiscover)) {
+        } else if (bin.matches(regDiscover)) {
             return CardBrand.DISCOVER;
-        } else if (iin.matches(regJCB)) {
+        } else if (bin.matches(regJCB)) {
             return CardBrand.JCB;
-        } else if (iin.matches(regTroy)) {
+        } else if (bin.matches(regTroy)) {
             return CardBrand.TROY;
-        } else if (iin.matches(regDina)) {
+        } else if (bin.matches(regDina)) {
             return CardBrand.DINACARD;
         } else {
             return CardBrand.UNKNOWN;
         }
+    }
+
+    private static boolean startsWithInList(String pan, @SuppressWarnings("SameParameterValue") List<String> prefixes) {
+        for (String prefix : prefixes) {
+            boolean startsWith = pan.startsWith(prefix);
+            if (startsWith) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     static boolean isValidCardHolderName(String name) {

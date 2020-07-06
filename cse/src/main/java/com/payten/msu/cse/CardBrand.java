@@ -16,7 +16,8 @@ public enum CardBrand {
     TROY("troy"),
     DINACARD("dinacard"),
     UNION_PAY("union-pay"),
-    UNKNOWN("unknown");
+    UNKNOWN("unknown"),
+    MAESTRO("maestro");
 
     private final String brand;
 
