@@ -6,7 +6,7 @@ Client Side Encryption is a way to encrypt customer sensitive information on mob
 ## How it works
 Merchant must include MSU Android CSE SDK in their mobile application:
 
-`implementation 'com.payten.msu:cse-android:1.1.0'`
+`implementation 'com.payten.msu:cse-android:1.1.1'`
 
 The steps should be like this:
 - include library in application
